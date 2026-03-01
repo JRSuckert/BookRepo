@@ -3,6 +3,8 @@
  *
  * Environment variables:
  *   BOOKS_DIR   — absolute path to mounted book folder (default: /books)
+ *   CACHE_FILE  — path to the persistent scan cache (default: /data/library-cache.json)
+ *                 Set to an empty string to disable persistence.
  *   PORT        — listening port (default: 3000)
  *   BASE_URL    — public base URL, no trailing slash (default: '')
  *   RESCAN_SEC  — how often (seconds) to rescan the library (default: 300)
@@ -17,18 +19,21 @@ const { scanLibrary, getCategories } = require('./scanner');
 const { registerOpds }               = require('./opds');
 
 const BOOKS_DIR  = process.env.BOOKS_DIR  || '/books';
+const CACHE_FILE = process.env.CACHE_FILE !== undefined
+  ? process.env.CACHE_FILE
+  : '/data/library-cache.json';
 const PORT       = parseInt(process.env.PORT || '3000', 10);
 const RESCAN_SEC = parseInt(process.env.RESCAN_SEC || '300', 10);
 
-// ── Library cache ─────────────────────────────────────────────────────────────
+// ── Library state ─────────────────────────────────────────────────────────────
 
 let library = [];
 let bookIndex = new Map(); // id → book
 
 function rescan() {
-  library  = scanLibrary(BOOKS_DIR);
+  const { books } = scanLibrary(BOOKS_DIR, CACHE_FILE || null);
+  library   = books;
   bookIndex = new Map(library.map((b) => [b.id, b]));
-  console.log(`[scan] ${library.length} book(s) found in ${BOOKS_DIR}`);
 }
 
 rescan();
@@ -67,7 +72,7 @@ app.get('/api/books', (req, res) => {
       title:    b.title,
       category: b.category,
       formats:  b.files.map((f) => f.ext),
-      mtime:    b.mtime,
+      mtime:    new Date(b.mtimeMs).toISOString(),
     }))
   );
 });
@@ -147,6 +152,7 @@ app.get('/read/:id/:ext', (req, res) => {
 app.listen(PORT, () => {
   console.log(`BookManager running on http://0.0.0.0:${PORT}`);
   console.log(`  Books dir : ${BOOKS_DIR}`);
+  console.log(`  Cache     : ${CACHE_FILE || '(disabled)'}`);
   console.log(`  OPDS feed : http://0.0.0.0:${PORT}/opds`);
   console.log(`  Rescan    : every ${RESCAN_SEC}s`);
 });

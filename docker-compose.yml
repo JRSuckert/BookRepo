@@ -8,8 +8,11 @@ services:
     volumes:
       # Mount your ebook folder here:
       - ./books:/books:ro
+      # Persistent cache — survives container restarts:
+      - ./data:/data
     environment:
       BOOKS_DIR: /books
+      CACHE_FILE: /data/library-cache.json
       PORT: 3000
       RESCAN_SEC: 300
       # Set BASE_URL if behind a reverse proxy, e.g.:
