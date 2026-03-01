@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reader — Book Library</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <link rel="stylesheet" href="/css/reader.css"/>
+</head>
+<body class="reader-body">
+  <header class="reader-header">
+    <a href="/" class="btn btn-ghost">← Library</a>
+    <span id="readerTitle" class="reader-title"></span>
+    <div class="reader-controls">
+      <button id="prevBtn" class="btn btn-ghost" hidden>‹ Prev</button>
+      <button id="nextBtn" class="btn btn-ghost" hidden>Next ›</button>
+      <a id="downloadLink" class="btn btn-ghost" download>↓ Download</a>
+    </div>
+  </header>
+
+  <div id="readerContainer" class="reader-container">
+    <!-- Content injected by reader.js -->
+  </div>
+
+  <!-- epub.js from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/epubjs@0.3.93/dist/epub.min.js"></script>
+  <script src="/js/reader.js"></script>
+</body>
+</html>

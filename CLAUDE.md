@@ -7,15 +7,31 @@ similar tools) working in this repository.
 
 ## Repository Overview
 
-**BookRepo** is in its initial state. As of this writing there is a single
-commit containing only a `README.md` file. The codebase, build system, and
-tests are yet to be established. When you begin adding code, update this file
-to reflect the actual structure.
+**BookRepo** is a self-hosted, Dockerized ebook library manager built with
+Node.js + Express. The application scans a mounted folder for ebooks, groups
+files with the same title but different extensions into a single entry, and
+exposes a web UI plus an OPDS 1.2 catalog feed.
 
 ```
 BookRepo/
-├── README.md      # Project description (currently just a title)
-└── CLAUDE.md      # This file
+├── Dockerfile
+├── docker-compose.yml
+├── README.md
+├── CLAUDE.md
+└── src/
+    ├── server.js        # Express entry point, API routes, file streaming
+    ├── scanner.js       # Recursive ebook scanner & grouping logic
+    ├── opds.js          # OPDS 1.2 Atom feed generator
+    ├── package.json     # Node.js dependencies
+    └── public/
+        ├── index.html   # Library UI (book grid, sidebar, search)
+        ├── reader.html  # In-browser reader (epub.js / PDF / plain-text)
+        ├── css/
+        │   ├── style.css
+        │   └── reader.css
+        └── js/
+            ├── app.js   # Library UI logic
+            └── reader.js
 ```
 
 ---
@@ -67,29 +83,20 @@ errors — those indicate an authorization problem, not a transient failure.
 
 ## Development Workflow
 
-Because the project has no build system yet, the following is the expected
-future workflow. Update this section as tooling is added.
-
-### Adding a build system
-
-When a language / framework is chosen, document here:
-
-- How to install dependencies
-- How to run the project
-- How to run the linter / formatter
-- How to run the test suite
-
-Example (replace with real commands once decided):
+The project uses Node.js + Express, containerized via Docker.
 
 ```bash
-# Install dependencies
-<install command>
+# Install dependencies (for local development)
+cd src && npm install
 
-# Run tests
-<test command>
+# Run locally (requires BOOKS_DIR to point to a real folder)
+BOOKS_DIR=./books node src/server.js
 
-# Lint / format
-<lint command>
+# Build and run with Docker Compose
+docker compose up -d
+
+# Rebuild after source changes
+docker compose up -d --build
 ```
 
 ### Making changes
@@ -163,13 +170,14 @@ Track this as the project evolves. Check off items as they are implemented.
 - [x] Repository initialized
 - [x] `README.md` created
 - [x] `CLAUDE.md` created
-- [ ] Language / framework chosen
-- [ ] Dependencies / package manager configured
-- [ ] Source directory structure established
+- [x] Language / framework chosen (Node.js + Express)
+- [x] Dependencies / package manager configured (`npm`, `src/package.json`)
+- [x] Source directory structure established (`src/`)
+- [x] Docker + docker-compose configured
+- [x] `README.md` updated with build and usage instructions
 - [ ] Linter / formatter configured
 - [ ] Test framework configured
 - [ ] CI/CD pipeline configured
-- [ ] `README.md` updated with build and usage instructions
 
 ---
 

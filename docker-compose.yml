@@ -1,0 +1,16 @@
+services:
+  bookmanager:
+    build: .
+    container_name: bookmanager
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount your ebook folder here:
+      - ./books:/books:ro
+    environment:
+      BOOKS_DIR: /books
+      PORT: 3000
+      RESCAN_SEC: 300
+      # Set BASE_URL if behind a reverse proxy, e.g.:
+      # BASE_URL: https://books.example.com
